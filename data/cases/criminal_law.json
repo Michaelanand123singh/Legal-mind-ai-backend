@@ -1,0 +1,56 @@
+[
+  {
+    "id": "criminal_001",
+    "case_name": "Regina v. Dudley and Stephens",
+    "citation": "(1884) 14 QBD 273",
+    "court": "Queen's Bench Division",
+    "year": 1884,
+    "area_of_law": "criminal_law",
+    "facts": "Four sailors were shipwrecked and adrift in a lifeboat for 19 days with no food and little water. Three of them (including Dudley and Stephens) killed and ate the fourth, a 17-year-old cabin boy, to survive. They were rescued four days later and charged with murder.",
+    "issue": "Can necessity be a defense to murder?",
+    "holding": "Necessity cannot justify the taking of an innocent life, even to preserve one's own life.",
+    "reasoning": "The court held that no man has the right to declare another's life forfeit to save his own. The law cannot measure the value of lives and decide who should live or die.",
+    "rule": "Necessity is not a defense to murder. The deliberate taking of innocent life cannot be justified by the need to preserve one's own life.",
+    "key_points": [
+      "Establishes limits on necessity defense",
+      "Affirms sanctity of human life principle",
+      "Distinguishes between killing in self-defense and killing for survival"
+    ]
+  },
+  {
+    "id": "criminal_002",
+    "case_name": "Miranda v. Arizona",
+    "citation": "384 U.S. 436 (1966)",
+    "court": "U.S. Supreme Court",
+    "year": 1966,
+    "area_of_law": "criminal_law",
+    "facts": "Ernesto Miranda was arrested and interrogated by police for kidnapping and rape. He was not informed of his right to remain silent or right to counsel. He confessed after two hours of interrogation. His confession was used to convict him.",
+    "issue": "What warnings must police give to suspects before custodial interrogation?",
+    "holding": "Police must inform suspects of their Fifth Amendment rights before custodial interrogation, or statements cannot be used as evidence.",
+    "reasoning": "The Fifth Amendment privilege against self-incrimination requires that suspects be warned of their rights. The coercive atmosphere of custodial interrogation necessitates these warnings to protect constitutional rights.",
+    "rule": "Before custodial interrogation, police must inform suspects of: right to remain silent, that statements can be used against them, right to counsel, and right to appointed counsel if indigent (Miranda warnings).",
+    "key_points": [
+      "Establishes Miranda warnings requirement",
+      "Protects Fifth Amendment rights during interrogation",
+      "Exclusionary rule applies to improperly obtained confessions"
+    ]
+  },
+  {
+    "id": "criminal_003",
+    "case_name": "Regina v. Woollin",
+    "citation": "[1999] 1 AC 82",
+    "court": "House of Lords",
+    "year": 1998,
+    "area_of_law": "criminal_law",
+    "facts": "Woollin threw his three-month-old baby son toward a pram in frustration. The baby struck a wall and died from head injuries. Woollin claimed he did not intend to kill or seriously harm the baby.",
+    "issue": "What constitutes intention in murder when the defendant claims they did not intend the result?",
+    "holding": "Intention can be found where death or serious bodily harm was a virtual certainty from the defendant's actions, and the defendant appreciated this fact.",
+    "reasoning": "The House of Lords established that foresight of virtual certainty is not intention itself, but evidence from which intention may be inferred by the jury.",
+    "rule": "In murder cases, intention may be inferred where the defendant foresaw death or serious bodily harm as a virtual certainty of their actions.",
+    "key_points": [
+      "Clarifies test for indirect intention in murder",
+      "Distinguishes between foresight and intention",
+      "Establishes 'virtual certainty' test"
+    ]
+  }
+]

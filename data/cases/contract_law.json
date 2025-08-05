@@ -1,0 +1,56 @@
+[
+  {
+    "id": "contract_001",
+    "case_name": "Carlill v. Carbolic Smoke Ball Co.",
+    "citation": "[1893] 1 QB 256",
+    "court": "Court of Appeal",
+    "year": 1893,
+    "area_of_law": "contract_law",
+    "facts": "The Carbolic Smoke Ball Company advertised that they would pay £100 to anyone who caught influenza after using their smoke ball for two weeks according to printed directions. They deposited £1000 in a bank to show their sincerity. Mrs. Carlill bought and used the smoke ball as directed but still caught influenza. She claimed the £100 reward.",
+    "issue": "Whether an advertisement can constitute a valid offer capable of acceptance, and whether consideration was provided by the plaintiff.",
+    "holding": "The Court held that the advertisement was a unilateral offer that could be accepted by performance, and Mrs. Carlill was entitled to the £100 reward.",
+    "reasoning": "The Court found that the advertisement was specific enough to constitute an offer rather than mere puff. The deposit of £1000 showed intention to create legal relations. Mrs. Carlill provided consideration by using the product as directed and incurring the inconvenience of doing so.",
+    "rule": "An advertisement can constitute a valid unilateral offer if it is specific and shows intention to create legal relations. Acceptance occurs through performance of the requested act.",
+    "key_points": [
+      "Unilateral contracts can be formed through advertisements",
+      "Consideration can be found in the performance of requested acts",
+      "Intention to create legal relations can be inferred from conduct"
+    ]
+  },
+  {
+    "id": "contract_002",
+    "case_name": "Hadley v. Baxendale",
+    "citation": "(1854) 9 Exch 341",
+    "court": "Court of Exchequer",
+    "year": 1854,
+    "area_of_law": "contract_law",
+    "facts": "Hadley owned a mill. The main shaft broke and needed to be sent to the manufacturer as a pattern for a new one. Hadley contracted with Baxendale, a carrier, to transport the shaft. Hadley did not inform Baxendale that the mill would be shut down until the shaft was repaired. Due to Baxendale's delay, the mill was closed for longer than necessary, causing lost profits.",
+    "issue": "What damages can be recovered for breach of contract when the breach causes consequential losses?",
+    "holding": "Damages are recoverable only if they arise naturally from the breach or were reasonably in the contemplation of both parties at the time of contract formation.",
+    "reasoning": "The court established that damages must be limited to those that flow directly from the breach or those that were foreseeable. Since Baxendale was not informed of the special circumstances, the lost profits were too remote.",
+    "rule": "Contract damages are limited to those arising naturally from the breach or those reasonably foreseeable by both parties at contract formation (the rule in Hadley v. Baxendale).",
+    "key_points": [
+      "Establishes the foreseeability test for contract damages",
+      "Distinguishes between direct and consequential damages",
+      "Special circumstances must be communicated for recovery of unusual losses"
+    ]
+  },
+  {
+    "id": "contract_003",
+    "case_name": "Hamer v. Sidway",
+    "citation": "124 N.Y. 538 (1891)",
+    "court": "New York Court of Appeals",
+    "year": 1891,
+    "area_of_law": "contract_law",
+    "facts": "Uncle promised nephew $5,000 if nephew refrained from drinking, smoking, swearing, and playing cards until age 21. Nephew complied with all conditions. Uncle died before paying, and executor refused to pay, claiming there was no consideration.",
+    "issue": "Does forbearance from legal activities constitute valid consideration for a contract?",
+    "holding": "Forbearance from legal rights constitutes sufficient consideration even if it provides no apparent benefit to the promisor.",
+    "reasoning": "Consideration consists of either a benefit to the promisor or a detriment to the promisee. The nephew's forbearance from legal activities constituted a legal detriment sufficient to support the contract.",
+    "rule": "Consideration can consist of forbearance from exercising a legal right, even if the forbearance provides no direct benefit to the promisor.",
+    "key_points": [
+      "Consideration requires either benefit or detriment",
+      "Forbearance from legal activities can constitute consideration",
+      "The adequacy of consideration is generally not reviewed by courts"
+    ]
+  }
+]
