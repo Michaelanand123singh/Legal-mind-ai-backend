@@ -77,7 +77,7 @@ def format_legal_outline(topic: str, subtopics: List[str]) -> str:
     return outline
 
 def format_statute_reference(statute: Dict[str, Any]) -> str:
-    """Format a statute reference"""
+    """Format a statute rreference"""
     return f"{statute.get('title', 'Unknown Statute')} § {statute.get('section', 'N/A')} ({statute.get('jurisdiction', 'Unknown')} {statute.get('year', '')})"
 
 def format_legal_question(question: str, answer: str, explanation: str = "") -> str:
