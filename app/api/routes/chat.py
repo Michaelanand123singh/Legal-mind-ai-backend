@@ -4,6 +4,9 @@ from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -42,7 +45,13 @@ async def generate_mock_response(topic: str, question: str) -> str:
 async def chat(request: ChatRequest, db=Depends(get_database)):
     """Handle chat requests with AI tutor"""
     try:
-        # Generate response (mock for now)
+        logger.info(f"Received chat request: {request.message[:100]}..., topic: {request.topic}")
+        
+        # Validate request
+        if not request.message or request.message.strip() == "":
+            raise HTTPException(status_code=400, detail="Message cannot be empty")
+        
+        # Generate response
         response_text = await generate_mock_response(
             topic=request.topic or "general",
             question=request.message
@@ -64,8 +73,11 @@ async def chat(request: ChatRequest, db=Depends(get_database)):
                 }
                 
                 await db.chat_sessions.insert_one(chat_session)
+                logger.info("Chat session saved to database")
             except Exception as db_error:
-                print(f"Database error (non-fatal): {db_error}")
+                logger.warning(f"Database save failed (non-fatal): {db_error}")
+        else:
+            logger.info("Database not available, skipping session save")
         
         return ChatResponse(
             response=response_text,
@@ -73,8 +85,11 @@ async def chat(request: ChatRequest, db=Depends(get_database)):
             sources=[]
         )
     
+    except HTTPException as he:
+        logger.error(f"HTTP error in chat: {he.detail}")
+        raise he
     except Exception as e:
-        print(f"Chat error: {e}")  # Log for debugging
+        logger.error(f"Unexpected error in chat: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing chat request: {str(e)}")
 
 @router.get("/sessions")
@@ -82,6 +97,7 @@ async def get_chat_sessions(db=Depends(get_database)):
     """Get user's chat sessions"""
     try:
         if not db:
+            logger.info("Database not available for sessions")
             return {"sessions": []}
         
         sessions_cursor = db.chat_sessions.find({"user_id": "anonymous"}).sort("updated_at", -1)
@@ -94,20 +110,23 @@ async def get_chat_sessions(db=Depends(get_database)):
         
         return {"sessions": sessions}
     except Exception as e:
-        print(f"Sessions error: {e}")
-        # Return empty sessions if there's an error
+        logger.error(f"Sessions error: {e}")
         return {"sessions": []}
 
 @router.get("/topics")
 async def get_chat_topics():
     """Get available chat topics"""
-    return {
-        "topics": [
-            {"id": "contract_law", "name": "Contract Law"},
-            {"id": "tort_law", "name": "Tort Law"},
-            {"id": "criminal_law", "name": "Criminal Law"},
-            {"id": "constitutional_law", "name": "Constitutional Law"},
-            {"id": "civil_procedure", "name": "Civil Procedure"},
-            {"id": "evidence", "name": "Evidence Law"}
-        ]
-    }
+    try:
+        return {
+            "topics": [
+                {"id": "contract_law", "name": "Contract Law"},
+                {"id": "tort_law", "name": "Tort Law"},
+                {"id": "criminal_law", "name": "Criminal Law"},
+                {"id": "constitutional_law", "name": "Constitutional Law"},
+                {"id": "civil_procedure", "name": "Civil Procedure"},
+                {"id": "evidence", "name": "Evidence Law"}
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Topics error: {e}")
+        raise HTTPException(status_code=500, detail=f"Error getting topics: {str(e)}")
