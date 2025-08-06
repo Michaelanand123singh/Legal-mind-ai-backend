@@ -39,18 +39,19 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration - Updated to fix CORS issues
+# CORS configuration - Fixed for production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:5173",
-        "https://legal-mind-ai-frontend.vercel.app",  # Your exact frontend URL
-        "https://legal-mind-ai-frontend-*.vercel.app",  # For preview deployments
+        "https://legal-mind-ai-frontend.vercel.app",
+        "https://*.vercel.app",  # This allows all Vercel preview deployments
     ],
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"]  # Added this
 )
 
 # Include routers only if modules are available
@@ -87,3 +88,8 @@ async def cors_test():
         "frontend": "https://legal-mind-ai-frontend.vercel.app",
         "backend": "Cloud Run"
     }
+
+# Add OPTIONS handler for CORS preflight requests
+@app.options("/{full_path:path}")
+async def options_handler(full_path: str):
+    return {"message": "OK"}
