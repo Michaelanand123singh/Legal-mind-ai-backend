@@ -58,7 +58,7 @@ async def chat(request: ChatRequest, db=Depends(get_database)):
         )
         
         # Save chat session if database is available
-        if db:
+        if db is not None:
             try:
                 chat_session = {
                     "id": str(uuid.uuid4()),
@@ -77,7 +77,7 @@ async def chat(request: ChatRequest, db=Depends(get_database)):
             except Exception as db_error:
                 logger.warning(f"Database save failed (non-fatal): {db_error}")
         else:
-            logger.info("Database not available, skipping session save")
+            logger.info("Database not available, running in demo mode")
         
         return ChatResponse(
             response=response_text,
@@ -90,14 +90,15 @@ async def chat(request: ChatRequest, db=Depends(get_database)):
         raise he
     except Exception as e:
         logger.error(f"Unexpected error in chat: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error processing chat request: {str(e)}")
+        # Don't expose internal error details to client
+        raise HTTPException(status_code=500, detail="An error occurred while processing your request. Please try again.")
 
 @router.get("/sessions")
 async def get_chat_sessions(db=Depends(get_database)):
     """Get user's chat sessions"""
     try:
-        if not db:
-            logger.info("Database not available for sessions")
+        if db is None:
+            logger.info("Database not available, returning empty sessions")
             return {"sessions": []}
         
         sessions_cursor = db.chat_sessions.find({"user_id": "anonymous"}).sort("updated_at", -1)
@@ -111,6 +112,7 @@ async def get_chat_sessions(db=Depends(get_database)):
         return {"sessions": sessions}
     except Exception as e:
         logger.error(f"Sessions error: {e}")
+        # Return empty sessions instead of failing
         return {"sessions": []}
 
 @router.get("/topics")
@@ -129,4 +131,4 @@ async def get_chat_topics():
         }
     except Exception as e:
         logger.error(f"Topics error: {e}")
-        raise HTTPException(status_code=500, detail=f"Error getting topics: {str(e)}")
+        raise HTTPException(status_code=500, detail="Error getting topics")
