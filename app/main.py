@@ -39,16 +39,17 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS configuration
+# CORS configuration - Updated to fix CORS issues
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://*.vercel.app",
-        "https://*.onrender.com"
+        "http://localhost:5173",
+        "https://legal-mind-ai-frontend.vercel.app",  # Your exact frontend URL
+        "https://legal-mind-ai-frontend-*.vercel.app",  # For preview deployments
     ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
 )
 
@@ -76,4 +77,13 @@ async def health_check():
         "status": "healthy",
         "service": "legal-ai-backend",
         "version": "1.0.0"
+    }
+
+# Additional endpoint for testing CORS
+@app.get("/cors-test")
+async def cors_test():
+    return {
+        "message": "CORS is working!",
+        "frontend": "https://legal-mind-ai-frontend.vercel.app",
+        "backend": "Cloud Run"
     }
