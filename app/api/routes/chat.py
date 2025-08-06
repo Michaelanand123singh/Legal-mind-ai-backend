@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from app.core.database import get_database
+from app.services.llm_service import llm_service
+from app.services.rag_service import rag_service
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 from datetime import datetime
@@ -27,19 +29,7 @@ class ChatSession(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-# Mock LLM response function
-async def generate_mock_response(topic: str, question: str) -> str:
-    """Generate a mock legal explanation"""
-    responses = {
-        "contract_law": f"Regarding your contract law question: '{question}' - In contract law, the fundamental elements include offer, acceptance, consideration, and capacity. Your specific question relates to key principles that govern contractual relationships.",
-        "tort_law": f"For your tort law inquiry: '{question}' - Tort law deals with civil wrongs and the remedies available. The main categories are intentional torts, negligence, and strict liability.",
-        "criminal_law": f"Concerning your criminal law question: '{question}' - Criminal law involves offenses against the state. Key elements include actus reus (guilty act) and mens rea (guilty mind).",
-        "constitutional_law": f"Regarding constitutional law: '{question}' - Constitutional law governs the interpretation and implementation of the Constitution, including separation of powers and individual rights.",
-        "civil_procedure": f"About civil procedure: '{question}' - Civil procedure governs the process by which civil cases are adjudicated in court, including pleadings, discovery, and trial procedures.",
-        "evidence": f"Concerning evidence law: '{question}' - Evidence law determines what information may be presented to a judge or jury and how it should be presented during trial."
-    }
-    
-    return responses.get(topic, f"Thank you for your legal question: '{question}'. This is a general legal inquiry that requires careful analysis of applicable laws and precedents.")
+# REMOVED THE MOCK FUNCTION - Using real AI services now
 
 @router.post("/", response_model=ChatResponse)
 async def chat(request: ChatRequest, db=Depends(get_database)):
@@ -51,11 +41,48 @@ async def chat(request: ChatRequest, db=Depends(get_database)):
         if not request.message or request.message.strip() == "":
             raise HTTPException(status_code=400, detail="Message cannot be empty")
         
-        # Generate response
-        response_text = await generate_mock_response(
-            topic=request.topic or "general",
-            question=request.message
-        )
+        # Get relevant context from RAG service
+        try:
+            context = rag_service.get_context_for_query(
+                query=request.message, 
+                topic=request.topic
+            )
+            logger.info(f"Retrieved {len(context)} context items from RAG")
+        except Exception as e:
+            logger.warning(f"RAG service error: {e}. Proceeding without context.")
+            context = []
+        
+        # Generate response using LLM service with context
+        try:
+            response_text = await llm_service.generate_legal_explanation(
+                topic=request.topic or "general",
+                question=request.message,
+                context=context
+            )
+            logger.info("Generated response using LLM service")
+        except Exception as e:
+            logger.error(f"LLM service error: {e}")
+            # Fallback to basic response if LLM fails
+            try:
+                # Try basic LLM call without context as fallback
+                response_text = await llm_service.generate_response(
+                    f"As a legal tutor, please explain: {request.message} in the context of {request.topic or 'general law'}"
+                )
+                logger.info("Generated fallback response using basic LLM")
+            except Exception as fallback_error:
+                logger.error(f"Fallback LLM also failed: {fallback_error}")
+                response_text = f"I apologize, but I'm experiencing technical difficulties. However, I can tell you that your question about '{request.message}' in {request.topic or 'general legal matters'} is important. Please try again in a moment."
+        
+        # Extract source information from context
+        sources = []
+        if context:
+            # Extract case names or other identifiers from context for citation
+            for ctx in context:
+                if "Case:" in ctx:
+                    case_line = ctx.split('\n')[0]  # First line usually has case name
+                    case_name = case_line.replace("Case: ", "").strip()
+                    if case_name and case_name != "Unknown":
+                        sources.append(case_name)
         
         # Save chat session if database is available
         if db is not None:
@@ -68,6 +95,7 @@ async def chat(request: ChatRequest, db=Depends(get_database)):
                         {"role": "user", "content": request.message, "timestamp": datetime.now()},
                         {"role": "assistant", "content": response_text, "timestamp": datetime.now()}
                     ],
+                    "sources": sources,
                     "created_at": datetime.now(),
                     "updated_at": datetime.now()
                 }
@@ -82,7 +110,7 @@ async def chat(request: ChatRequest, db=Depends(get_database)):
         return ChatResponse(
             response=response_text,
             topic=request.topic,
-            sources=[]
+            sources=sources
         )
     
     except HTTPException as he:
@@ -132,3 +160,38 @@ async def get_chat_topics():
     except Exception as e:
         logger.error(f"Topics error: {e}")
         raise HTTPException(status_code=500, detail="Error getting topics")
+
+# Optional: Add endpoint to test RAG functionality
+@router.post("/test-rag")
+async def test_rag(query: str, topic: Optional[str] = None):
+    """Test endpoint to verify RAG is working"""
+    try:
+        context = rag_service.get_context_for_query(query, topic)
+        return {
+            "query": query,
+            "topic": topic,
+            "context_found": len(context),
+            "context": context
+        }
+    except Exception as e:
+        logger.error(f"RAG test error: {e}")
+        raise HTTPException(status_code=500, detail=f"RAG test failed: {str(e)}")
+
+# Optional: Add endpoint to test LLM functionality
+@router.post("/test-llm")
+async def test_llm(message: str, topic: Optional[str] = None):
+    """Test endpoint to verify LLM is working"""
+    try:
+        response = await llm_service.generate_legal_explanation(
+            topic=topic or "general",
+            question=message,
+            context=[]
+        )
+        return {
+            "query": message,
+            "topic": topic,
+            "response": response
+        }
+    except Exception as e:
+        logger.error(f"LLM test error: {e}")
+        raise HTTPException(status_code=500, detail=f"LLM test failed: {str(e)}")
